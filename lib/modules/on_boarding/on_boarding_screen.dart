@@ -121,7 +121,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     dotWidth: 10,
                     expansionFactor: 4.0,
                     spacing: 5,
-
                   ),
                   count: bording.length,
                 ),
