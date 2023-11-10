@@ -76,9 +76,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          TextButton(
-            onPressed: (){navigatAndRemove(context, LoginScreen.routName);},
-            child: Text('SKIP'),
+          defaultTextButton(
+              onPressed: (){navigatAndRemove(context, LoginScreen.routName);},
+              text: 'skip'
           ),
         ],
       ),
