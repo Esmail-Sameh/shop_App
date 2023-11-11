@@ -11,21 +11,27 @@ Widget defaultTextFile ({
   required IconData prefixIcon,
   required TextEditingController controller,
   required TextInputType inputType,
-  required String? Function(String?) validator,
+  GlobalKey<FormFieldState>? key,
+  required String? Function (String?)? validator ,
   Function(String)? onChange,
+  Function()? suffixOnPressed,
   bool isPassword = false,
   IconData? suffixIcon,
 })=> TextFormField(
+  key: key,
   decoration: InputDecoration(
     border: OutlineInputBorder(),
     hintText: lable,
     prefixIcon: Icon(prefixIcon),
-    suffixIcon: Icon(suffixIcon),
+    suffixIcon: IconButton(
+     icon:  Icon(suffixIcon),
+      onPressed: suffixOnPressed ,
+    ),
   ),
   onChanged: onChange,
   controller: controller,
   keyboardType: inputType,
-  validator: validator ,
+  validator: validator,
   obscureText: isPassword,
 
 );
