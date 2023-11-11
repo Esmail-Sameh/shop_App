@@ -1,6 +1,8 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shop_app/models/login_model.dart';
 import '../login/cubit/login_cubit.dart';
 import '../login/cubit/login_states.dart';
 import '../register/register_screen.dart';
@@ -20,7 +22,31 @@ class LoginScreen extends StatelessWidget {
       body: BlocProvider(
         create: (context) => LoginCubit(),
         child: BlocConsumer<LoginCubit, LoginStates>(
-          listener: (context, state) {},
+          listener: (context, state) {
+            if(state is LoginSuccessStates){
+              if(state.loginModel.status == true){
+                Fluttertoast.showToast(
+                    msg: '${state.loginModel.message}',
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.TOP,
+                    timeInSecForIosWeb: 5,
+                    backgroundColor: Colors.green,
+                    textColor: Colors.white,
+                    fontSize: 16.0
+                );
+              }else{
+                Fluttertoast.showToast(
+                    msg: '${state.loginModel.message}',
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.TOP,
+                    timeInSecForIosWeb: 5,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0
+                );
+              }
+            }
+          },
           builder: (context, state) {
             return SafeArea(
               child: Padding(

@@ -1,8 +1,13 @@
+import 'package:shop_app/models/login_model.dart';
+
 abstract class LoginStates{}
 
 class LoginInitialStates extends LoginStates{}
 
-class LoginSuccessStates extends LoginStates{}
+class LoginSuccessStates extends LoginStates{
+  final LoginModel loginModel;
+  LoginSuccessStates(this.loginModel);
+}
 
 class LoginLodingStates extends LoginStates{}
 
