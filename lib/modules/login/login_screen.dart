@@ -1,8 +1,8 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shop_app/models/login_model.dart';
+import 'package:shop_app/layout/home_layout.dart';
+import 'package:shop_app/shared/network/local/cache_helper.dart';
 import '../login/cubit/login_cubit.dart';
 import '../login/cubit/login_states.dart';
 import '../register/register_screen.dart';
@@ -25,25 +25,19 @@ class LoginScreen extends StatelessWidget {
           listener: (context, state) {
             if(state is LoginSuccessStates){
               if(state.loginModel.status == true){
-                Fluttertoast.showToast(
-                    msg: '${state.loginModel.message}',
-                    toastLength: Toast.LENGTH_LONG,
-                    gravity: ToastGravity.TOP,
-                    timeInSecForIosWeb: 5,
-                    backgroundColor: Colors.green,
-                    textColor: Colors.white,
-                    fontSize: 16.0
+                CacheHelper.saveData(key: 'token', value: state.loginModel.data!.token).then((value)
+                {
+                  navigatAndRemove(context, HomeLayoutScreen.routName);
+                });
+                showToast(
+                  text: '${state.loginModel.message}',
+                  state: ToastState.SUCCESS
                 );
               }else{
-                Fluttertoast.showToast(
-                    msg: '${state.loginModel.message}',
-                    toastLength: Toast.LENGTH_LONG,
-                    gravity: ToastGravity.TOP,
-                    timeInSecForIosWeb: 5,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0
-                );
+               showToast(
+                   text: '${state.loginModel.message}',
+                   state: ToastState.ERROR
+               );
               }
             }
           },
@@ -125,8 +119,7 @@ class LoginScreen extends StatelessWidget {
                               password: passwordController.text,
                               lang: 'en',
                             );
-                            print(
-                                emailController.text + passwordController.text);
+                            print(emailController.text + passwordController.text);
                           }
                         },
                         text: 'LOGIN',
