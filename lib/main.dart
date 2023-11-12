@@ -1,8 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop_app/layout/home_layout.dart';
 import 'package:shop_app/modules/login/login_screen.dart';
 import 'package:shop_app/modules/register/register_screen.dart';
+import 'package:shop_app/shared/cubit/app_cubit/app_cubit.dart';
 import 'package:shop_app/shared/network/local/cache_helper.dart';
 import 'package:shop_app/shared/network/remote/dio_helper.dart';
 import 'package:shop_app/test.dart';
@@ -43,17 +45,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: startWidget,
-      routes: {
-        OnBoardingScreen.routName:(context) => OnBoardingScreen(),
-        LoginScreen.routName:(context) => LoginScreen(),
-        RegisterScreen.routName:(context) => RegisterScreen(),
-        Test.routName: (context) => Test(),
-        HomeLayoutScreen.routName : (context) => HomeLayoutScreen(),
-      },
-      theme: lightTheme,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => AppCubit(),),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: startWidget,
+        routes: {
+          OnBoardingScreen.routName:(context) => OnBoardingScreen(),
+          LoginScreen.routName:(context) => LoginScreen(),
+          RegisterScreen.routName:(context) => RegisterScreen(),
+          Test.routName: (context) => Test(),
+          HomeLayoutScreen.routName : (context) => HomeLayoutScreen(),
+        },
+        theme: lightTheme,
+      ),
     );
   }
 }

@@ -11,8 +11,16 @@ ThemeData lightTheme = ThemeData(
     ),
     titleTextStyle: TextStyle(
       color: Colors.black,
+      fontWeight: FontWeight.bold,
     ),
     color: Colors.white,
+  ),
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    elevation: 8.0,
+    selectedItemColor: defaultColor,
+    unselectedItemColor: Colors.grey,
+    showUnselectedLabels: true,
+    type: BottomNavigationBarType.fixed
   ),
   textTheme: TextTheme(),
   fontFamily:'Janna',
