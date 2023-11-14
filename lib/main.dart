@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop_app/layout/home_layout.dart';
 import 'package:shop_app/modules/login/login_screen.dart';
 import 'package:shop_app/modules/register/register_screen.dart';
+import 'package:shop_app/modules/search/search_screen.dart';
+import 'package:shop_app/shared/components/constants.dart';
 import 'package:shop_app/shared/cubit/app_cubit/app_cubit.dart';
 import 'package:shop_app/shared/network/local/cache_helper.dart';
 import 'package:shop_app/shared/network/remote/dio_helper.dart';
@@ -19,7 +21,7 @@ void main ()async{
 
   //CacheHelper.saveData(key: 'onBoarding', value: false);
   bool? onboarding = CacheHelper.getData(key: 'onBoarding');
-  String? token = CacheHelper.getData(key: 'token');
+  token = CacheHelper.getData(key: 'token');
   Widget? widget;
 
   if(onboarding != null){
@@ -47,17 +49,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AppCubit(),),
+        BlocProvider(create: (context) => AppCubit()..getHomeData(),),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: startWidget,
         routes: {
-          OnBoardingScreen.routName:(context) => OnBoardingScreen(),
-          LoginScreen.routName:(context) => LoginScreen(),
-          RegisterScreen.routName:(context) => RegisterScreen(),
+          OnBoardingScreen.routName: (context) => OnBoardingScreen(),
+          LoginScreen.routName: (context) => LoginScreen(),
+          RegisterScreen.routName: (context) => RegisterScreen(),
           Test.routName: (context) => Test(),
-          HomeLayoutScreen.routName : (context) => HomeLayoutScreen(),
+          HomeLayoutScreen.routName: (context) => HomeLayoutScreen(),
+          SearchScreen.routName: (context) => SearchScreen(),
         },
         theme: lightTheme,
       ),

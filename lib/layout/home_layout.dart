@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop_app/modules/search/search_screen.dart';
+import 'package:shop_app/shared/components/components.dart';
 import 'package:shop_app/shared/cubit/app_cubit/app_cubit.dart';
 import 'package:shop_app/shared/cubit/app_cubit/app_status.dart';
 
@@ -17,7 +19,9 @@ class HomeLayoutScreen extends StatelessWidget {
             title: Text(cubit.titles[cubit.currentIndex]),
             actions: [
               IconButton(
-                  onPressed: (){},
+                  onPressed: (){
+                    navigatTo(context, SearchScreen.routName );
+                  },
                   icon: Icon(Icons.search_rounded),
               )],
           ),

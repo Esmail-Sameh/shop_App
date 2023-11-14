@@ -16,6 +16,8 @@ Widget defaultTextFile({
   required TextInputType inputType,
   GlobalKey<FormFieldState>? key,
   required String? Function(String?)? validator,
+  Function()? onTap,
+  Function(String)? onSubmitted,
   Function(String)? onChange,
   Function()? suffixOnPressed,
   bool isPassword = false,
@@ -23,6 +25,8 @@ Widget defaultTextFile({
 }) =>
     TextFormField(
       key: key,
+      onTap: onTap ,
+      onFieldSubmitted: onSubmitted ,
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         hintText: lable,
@@ -81,8 +85,8 @@ void showToast({
         backgroundColor: chooseToastColor(state),
         textColor: Colors.white,
         fontSize: 16.0);
-//enum toast color
 
+//enum toast color
 enum ToastState { SUCCESS, ERROR, WARNING }
 
 Color chooseToastColor(ToastState state) {
