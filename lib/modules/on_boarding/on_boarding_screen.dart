@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/modules/login/login_screen.dart';
 import 'package:shop_app/shared/components/components.dart';
+import 'package:shop_app/shared/network/local/cache_helper.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../shared/styles/colors.dart';
 
@@ -42,6 +43,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
       body: 'Screen body_3',
     ),
   ];
+
+
   bool isLast = false;
   var onbordController = PageController();
 
@@ -77,7 +80,10 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
       appBar: AppBar(
         actions: [
           defaultTextButton(
-              onPressed: (){navigatAndRemove(context, LoginScreen.routName);},
+              onPressed: (){
+                CacheHelper.saveData(key: 'onBoarding', value: true);
+                navigatAndRemove(context, LoginScreen.routName);
+              },
               text: 'skip'
           ),
         ],
@@ -128,7 +134,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 FloatingActionButton(
                   onPressed: () {
                     if(isLast){
-                     navigatAndRemove(context, LoginScreen.routName);
+                      CacheHelper.saveData(key: 'onBoarding', value: true);
+                      navigatAndRemove(context, LoginScreen.routName);
                     }else {
                       onbordController.nextPage(
                           duration: Duration(milliseconds: 750,),
