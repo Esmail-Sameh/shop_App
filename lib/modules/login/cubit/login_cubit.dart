@@ -17,7 +17,7 @@ class LoginCubit extends Cubit<LoginStates> {
   void userLogin({
     required String user,
     required String password,
-    String? lang,
+    String? lang ,
     String? token,
   }) {
     emit(LoginLodingStates());
