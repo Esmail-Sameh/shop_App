@@ -18,6 +18,9 @@ dependencies:
   conditional_builder_null_safety: ^0.0.6
   smooth_page_indicator: ^1.1.0
   dio: ^5.3.3
+  fluttertoast: ^8.2.4
+  shared_preferences: ^2.2.2
+  carousel_slider: ^4.2.1
 
 
 dev_dependencies:
