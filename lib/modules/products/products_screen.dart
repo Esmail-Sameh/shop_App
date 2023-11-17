@@ -7,6 +7,8 @@ import 'package:shop_app/models/home_model.dart';
 import 'package:shop_app/shared/cubit/app_cubit/app_cubit.dart';
 import 'package:shop_app/shared/cubit/app_cubit/app_status.dart';
 import 'package:shop_app/shared/styles/colors.dart';
+import '../../models/categories_model.dart';
+
 
 class ProductsScreen extends StatelessWidget {
   const ProductsScreen({Key? key}) : super(key: key);
@@ -18,8 +20,9 @@ class ProductsScreen extends StatelessWidget {
       builder: (context, state) {
         var cubit = AppCubit.get(context);
         return ConditionalBuilder(
-          condition: cubit.homeModel != null,
-          builder: (context) => productsBuilder(cubit.homeModel!),
+          condition: cubit.homeModel != null && cubit.categoriesModel != null,
+          builder: (context) =>
+              productsBuilder(cubit.homeModel!, cubit.categoriesModel!),
           fallback: (context) => const Center(
               child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -36,13 +39,16 @@ class ProductsScreen extends StatelessWidget {
     );
   }
 
-  Widget productsBuilder(HomeModel model) => SingleChildScrollView(
+  Widget productsBuilder(HomeModel HModel, CategoriesModel CModel) =>
+      SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CarouselSlider(
-              items: model.data!.banners
+              items: HModel.data.banners
                   .map((e) => Image.network(
-                        '${e['image']}',
+                        e.image,
                         fit: BoxFit.cover,
                         width: double.infinity,
                       ))
@@ -60,6 +66,43 @@ class ProductsScreen extends StatelessWidget {
                   scrollDirection: Axis.horizontal),
             ),
             SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Categories',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    height: 100,
+                    child: ListView.separated(
+                      physics: BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) => buildCategoriesItem(CModel.data.data[index]),
+                        separatorBuilder: (context, index) => SizedBox(
+                              width: 10,
+                            ),
+                        itemCount: CModel.data.data.length
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'New Products',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
             Container(
               color: Colors.grey[300],
               child: GridView.count(
@@ -68,16 +111,46 @@ class ProductsScreen extends StatelessWidget {
                 crossAxisCount: 2,
                 mainAxisSpacing: 1,
                 crossAxisSpacing: 1,
-                childAspectRatio: 1 / 1.7,
-                children: List.generate(model.data!.products.length,
-                    (index) => buildGridProduct(model.data!.products[index])),
+                childAspectRatio: 1 / 1.68,
+                children: List.generate(HModel.data.products.length,
+                    (index) => buildGridProduct(HModel.data.products[index])),
               ),
             ),
           ],
         ),
       );
 
-  Widget buildGridProduct(dynamic model) => Container(
+  Widget buildCategoriesItem(Datum model) => Container(
+        height: 100,
+        width: 100,
+        child: Stack(
+          alignment: AlignmentDirectional.bottomCenter,
+          children: [
+            Image(
+              image: NetworkImage(
+                model.image
+                  ),
+              height: 100,
+            ),
+            Container(
+              width: 100,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5) , bottomRight: Radius.circular(5)),
+                color: Colors.black.withOpacity(.6),
+              ),
+              child: Text(
+                model.name,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+
+  Widget buildGridProduct(Products model) => Container(
         color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -89,30 +162,30 @@ class ProductsScreen extends StatelessWidget {
                 children: [
                   Image(
                     image: NetworkImage(
-                      '${model['image']}',
+                      // '${model['image']}',
+                      model.image
                     ),
                     height: 200,
                     width: double.infinity,
                   ),
-                  if (model['discount'] == 0)
-                  Container(
-                    color: Colors.red,
-                    child: Padding(
-                      padding:  EdgeInsets.symmetric(horizontal: 5),
-                      child: Text(
-                        'DISCOUNT',
-                        style: TextStyle(
-                          fontSize: 8,
-                          color: Colors.white
+                  if (model.discount == 0)
+                    Container(
+                      color: Colors.red,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        child: Text(
+                          'DISCOUNT',
+                          style: TextStyle(fontSize: 8, color: Colors.white),
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Text(
-                '${model['name']}',
+                model.name,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 14, height: 1.3),
@@ -122,15 +195,17 @@ class ProductsScreen extends StatelessWidget {
                 textBaseline: TextBaseline.alphabetic,
                 children: [
                   Text(
-                    '${model['price']}',
+                    //'${model['price']}',
+                    '${model.price}',
                     style: TextStyle(color: defaultColor, fontSize: 14),
                   ),
                   SizedBox(
                     width: 5,
                   ),
-                  if (model['discount'] == 0)
+                  if (model.discount == 0)
                     Text(
-                      '${model['old_price']}',
+                      //'${model['old_price']}',
+                      '${model.oldPrice}',
                       style: TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
@@ -138,14 +213,21 @@ class ProductsScreen extends StatelessWidget {
                     ),
                   Spacer(),
                   IconButton(
-                    onPressed: () {
-                      print('is favorit');
-                    },
-                    icon: Icon(
-                      Icons.favorite_border_outlined,
-                      size: 15,
-                    )
-                  ),
+                      onPressed: () {
+                        print('is favorit');
+                        //print(model['id']);
+
+                      },
+                      icon: CircleAvatar(
+                        radius: 15,
+                        //backgroundColor: model['in_favorites'] ? defaultColor : Colors.grey ,
+                        backgroundColor: model.inFavorites ? defaultColor : Colors.grey ,
+                        child: Icon(
+                          Icons.favorite_border_outlined,
+                          color: Colors.white,
+                          size: 15,
+                        ),
+                      )),
                 ],
               ),
             ],

@@ -1,54 +1,92 @@
-class HomeModel{
-  bool? status;
-  HomeDataModel? data;
 
-  HomeModel.fromJson(Map<String , dynamic> json){
-    status = json['status'];
-    data = HomeDataModel.fromJson(json['data']);
-  }
-}
-class HomeDataModel{
-  List<dynamic> banners = [];
-  List<dynamic> products = [];
 
-  HomeDataModel.fromJson(Map<String , dynamic> json){
-    json['banners'].forEach((element){
-      banners.add(element);
-    });
-    json['products'].forEach((element){
-      products.add(element);
-    });
-  }
+class HomeModel {
+  bool status;
+  String? message;
+  Data data;
+
+  HomeModel({
+    required this.status,
+    required this.message,
+    required this.data,
+  });
+
+  factory HomeModel.fromJson(Map<String, dynamic> json) =>
+      HomeModel(
+        status: json['status'],
+        message: json['message'],
+        data: Data.fromJson(json["data"]),
+      );
 }
 
-class BannersModel{
-  int? id;
-  String? image;
+class Data {
+  List<Banners> banners = [];
+  List<Products> products = [];
 
-  BannersModel.fromJson(Map<String , dynamic> json){
-    id = json['id'];
-    image = json['image'];
-  }
+
+  Data({
+    required this.banners,
+    required this.products,
+  });
+
+  factory Data.fromJson(Map<String, dynamic> json) =>
+      Data(
+        banners: List<Banners>.from(json['banners'].map(
+                (elemant) => Banners.fromJson(elemant))),
+        products: List<Products>.from(json["products"].map(
+                (elemant) => Products.fromJson(elemant))),
+      );
 }
 
-class ProductsModel{
-  int? id;
+class Banners {
+  int id;
+  String image;
+
+  Banners({
+    required this.id,
+    required this.image,
+  });
+
+  factory Banners.fromJson(Map<String, dynamic> json) =>
+      Banners(
+        id: json["id"],
+        image: json["image"],
+      );
+}
+
+class Products {
+  int id;
   dynamic price;
   dynamic oldPrice;
   dynamic discount;
-  String? image;
-  String? name;
-  bool? inFavorites;
-  bool? inCart;
+  String image;
+  String name;
+  String description;
+  bool inFavorites;
+  bool inCart;
 
-  ProductsModel.fromJson(Map<String , dynamic> json){
-    id = json['id'];
-    price = json['price'];
-    oldPrice = json['old_price'];
-    discount = json['discount'];
-    image = json['image'];
-    name = json['name'];
-    inFavorites = json['in_favorites'];
-    inCart = json['in_cart'];
-  }
+  Products({
+    required this.id,
+    required this.price,
+    required this.oldPrice,
+    required this.discount,
+    required this.image,
+    required this.name,
+    required this.description,
+    required this.inFavorites,
+    required this.inCart,
+  });
+
+  factory Products.fromJson(Map<String, dynamic> json) =>
+      Products(
+          id: json["id"],
+          price: json["price"],
+          oldPrice: json["old_price"],
+          discount: json["discount"],
+          image: json["image"],
+          name: json["name"],
+          description: json["description"],
+          inFavorites: json["in_favorites"],
+          inCart: json["in_cart"],
+      );
 }

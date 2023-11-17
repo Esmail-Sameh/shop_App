@@ -18,11 +18,11 @@ void main ()async{
   Bloc.observer = MyBlocObserver();
   await DioHelper.init();
   await CacheHelper.init();
-
   //CacheHelper.saveData(key: 'onBoarding', value: false);
   bool? onboarding = CacheHelper.getData(key: 'onBoarding');
   token = CacheHelper.getData(key: 'token');
   Widget? widget;
+  print(token);
 
   if(onboarding != null){
     if(token != null){
@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AppCubit()..getHomeData(),),
+        BlocProvider(create: (context) => AppCubit()..getHomeData()..getCategoriesData(),),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
