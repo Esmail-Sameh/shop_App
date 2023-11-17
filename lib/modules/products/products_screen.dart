@@ -1,9 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop_app/models/home_model.dart';
+import 'package:shop_app/shared/components/components.dart';
 import 'package:shop_app/shared/cubit/app_cubit/app_cubit.dart';
 import 'package:shop_app/shared/cubit/app_cubit/app_status.dart';
 import 'package:shop_app/shared/styles/colors.dart';
@@ -11,18 +11,31 @@ import '../../models/categories_model.dart';
 
 
 class ProductsScreen extends StatelessWidget {
-  const ProductsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AppCubit, AppStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if(state is AppChangeFavoriteSuccessState){
+          if(state.model.status == false){
+            showToast(
+                text: state.model.message,
+                state: ToastState.ERROR
+            );
+          }else{
+            showToast(
+                text: state.model.message,
+                state: ToastState.SUCCESS
+            );
+          }
+        }
+      },
       builder: (context, state) {
         var cubit = AppCubit.get(context);
         return ConditionalBuilder(
           condition: cubit.homeModel != null && cubit.categoriesModel != null,
           builder: (context) =>
-              productsBuilder(cubit.homeModel!, cubit.categoriesModel!),
+              productsBuilder(cubit.homeModel!, cubit.categoriesModel! ,context),
           fallback: (context) => const Center(
               child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -39,14 +52,14 @@ class ProductsScreen extends StatelessWidget {
     );
   }
 
-  Widget productsBuilder(HomeModel HModel, CategoriesModel CModel) =>
+  Widget productsBuilder(HomeModel hModel, CategoriesModel cModel , context  ) =>
       SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CarouselSlider(
-              items: HModel.data.banners
+              items: hModel.data.banners
                   .map((e) => Image.network(
                         e.image,
                         fit: BoxFit.cover,
@@ -84,11 +97,11 @@ class ProductsScreen extends StatelessWidget {
                     child: ListView.separated(
                       physics: BouncingScrollPhysics(),
                         scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) => buildCategoriesItem(CModel.data.data[index]),
+                        itemBuilder: (context, index) => buildCategoriesItem(cModel.data.data[index]),
                         separatorBuilder: (context, index) => SizedBox(
                               width: 10,
                             ),
-                        itemCount: CModel.data.data.length
+                        itemCount: cModel.data.data.length
                     ),
                   ),
                   SizedBox(height: 10),
@@ -112,8 +125,8 @@ class ProductsScreen extends StatelessWidget {
                 mainAxisSpacing: 1,
                 crossAxisSpacing: 1,
                 childAspectRatio: 1 / 1.68,
-                children: List.generate(HModel.data.products.length,
-                    (index) => buildGridProduct(HModel.data.products[index])),
+                children: List.generate(hModel.data.products.length,
+                    (index) => buildGridProduct(hModel.data.products[index] , context ) ),
               ),
             ),
           ],
@@ -150,7 +163,7 @@ class ProductsScreen extends StatelessWidget {
         ),
       );
 
-  Widget buildGridProduct(Products model) => Container(
+  Widget buildGridProduct(Products model , context) => Container(
         color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -214,14 +227,12 @@ class ProductsScreen extends StatelessWidget {
                   Spacer(),
                   IconButton(
                       onPressed: () {
-                        print('is favorit');
-                        //print(model['id']);
-
+                        AppCubit.get(context).changeFavoritesIcon(model.id);
                       },
                       icon: CircleAvatar(
                         radius: 15,
                         //backgroundColor: model['in_favorites'] ? defaultColor : Colors.grey ,
-                        backgroundColor: model.inFavorites ? defaultColor : Colors.grey ,
+                        backgroundColor: AppCubit.get(context).favorites[model.id]! ? defaultColor : Colors.grey ,
                         child: Icon(
                           Icons.favorite_border_outlined,
                           color: Colors.white,
