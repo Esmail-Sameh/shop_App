@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop_app/models/get_favorites_model.dart';
 import 'package:shop_app/models/home_model.dart';
+import 'package:shop_app/models/login_model.dart';
 import 'package:shop_app/modules/categories/categories_screen.dart';
 import 'package:shop_app/modules/favorites/favorites_screen.dart';
 import 'package:shop_app/modules/products/products_screen.dart';
@@ -99,7 +100,6 @@ class AppCubit extends Cubit<AppStates> {
   }
 
   GetFavorites? getFavorites;
-
   void getFavoritesData() {
     emit(AppLodingGetFavoriteState());
 
@@ -115,5 +115,50 @@ class AppCubit extends Cubit<AppStates> {
       emit(AppGetFavoriteErrorState());
     });
   }
+
+  LoginModel? userModel;
+  void getUserData() {
+    emit(AppLodingUserDataState());
+    DioHelper.getData(
+      url: PROFILE,
+      token: token,
+      lang: 'en',
+    ).then((value){
+      userModel= LoginModel.fromJson(value.data);
+      print(userModel!.data!.phone);
+      emit(AppUserDataSuccessState());
+    }).catchError((error) {
+      print("error when get user data" + error.toString());
+      emit(AppUserDataErrorState());
+    });
+  }
+
+  void updateUserData({
+    required String name,
+    required String email,
+    required String phone,
+}) {
+    emit(AppLodingUpdateUserDataState());
+    DioHelper.putData(
+      data: {
+        'name': name,
+        'email': email,
+        'phone': phone,
+      },
+      url: UPDATE_PROFILE,
+      token: token,
+      lang: 'en',
+    ).then((value){
+      userModel= LoginModel.fromJson(value.data);
+      print(userModel!.data!.phone);
+      emit(AppUpdateUserDataSuccessState());
+    }).catchError((error) {
+      print("error when get update user data" + error.toString());
+      emit(AppUpdateUserDataErrorState());
+    });
+  }
+
+
+
 
 }

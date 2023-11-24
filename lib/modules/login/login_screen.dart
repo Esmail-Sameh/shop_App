@@ -2,6 +2,7 @@ import 'package:conditional_builder_null_safety/conditional_builder_null_safety.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop_app/layout/home_layout.dart';
+import 'package:shop_app/shared/components/constants.dart';
 import 'package:shop_app/shared/network/local/cache_helper.dart';
 import '../login/cubit/login_cubit.dart';
 import '../login/cubit/login_states.dart';
@@ -23,21 +24,21 @@ class LoginScreen extends StatelessWidget {
         create: (context) => LoginCubit(),
         child: BlocConsumer<LoginCubit, LoginStates>(
           listener: (context, state) {
-            if(state is LoginSuccessStates){
-              if(state.loginModel.status == true){
-                CacheHelper.saveData(key: 'token', value: state.loginModel.data!.token).then((value)
-                {
+            if (state is LoginSuccessStates) {
+              if (state.loginModel.status == true) {
+                CacheHelper.saveData(
+                        key: 'token', value: state.loginModel.data!.token)
+                    .then((value) {
+                      token = state.loginModel.data!.token;
                   navigatAndRemove(context, HomeLayoutScreen.routName);
                 });
                 showToast(
-                  text: '${state.loginModel.message}',
-                  state: ToastState.SUCCESS
-                );
-              }else{
-               showToast(
-                   text: '${state.loginModel.message}',
-                   state: ToastState.ERROR
-               );
+                    text: '${state.loginModel.message}',
+                    state: ToastState.SUCCESS);
+              } else {
+                showToast(
+                    text: '${state.loginModel.message}',
+                    state: ToastState.ERROR);
               }
             }
           },
@@ -100,7 +101,8 @@ class LoginScreen extends StatelessWidget {
                             suffixIcon: LoginCubit.get(context).suffixIcon,
                             isPassword: LoginCubit.get(context).isPassword,
                             suffixOnPressed: () {
-                              LoginCubit.get(context).changePasswordVisibility();
+                              LoginCubit.get(context)
+                                  .changePasswordVisibility();
                             },
                           ),
                         ],
@@ -119,7 +121,8 @@ class LoginScreen extends StatelessWidget {
                               password: passwordController.text,
                               lang: 'en',
                             );
-                            print(emailController.text + passwordController.text);
+                            print(
+                                emailController.text + passwordController.text);
                           }
                         },
                         text: 'LOGIN',

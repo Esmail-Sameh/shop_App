@@ -32,3 +32,15 @@ class AppLodingGetFavoriteState extends AppStates{}
 class AppGetFavoriteSuccessState extends AppStates{}
 
 class AppGetFavoriteErrorState extends AppStates{}
+
+class AppLodingUserDataState extends AppStates{}
+
+class AppUserDataSuccessState extends AppStates{}
+
+class AppUserDataErrorState extends AppStates{}
+
+class AppLodingUpdateUserDataState extends AppStates{}
+
+class AppUpdateUserDataSuccessState extends AppStates{}
+
+class AppUpdateUserDataErrorState extends AppStates{}
