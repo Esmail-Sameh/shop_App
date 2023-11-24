@@ -1,16 +1,19 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shop_app/modules/login/cubit/login_cubit.dart';
-import 'package:shop_app/modules/login/cubit/login_states.dart';
-import 'package:shop_app/modules/register/register_screen.dart';
+import 'package:shop_app/layout/home_layout.dart';
+import 'package:shop_app/shared/components/constants.dart';
+import 'package:shop_app/shared/network/local/cache_helper.dart';
+import '../login/cubit/login_cubit.dart';
+import '../login/cubit/login_states.dart';
+import '../register/register_screen.dart';
 import '../../shared/components/components.dart';
 
 class LoginScreen extends StatelessWidget {
   static String routName = 'loginScreen';
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
+  var formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -19,16 +22,34 @@ class LoginScreen extends StatelessWidget {
       appBar: AppBar(),
       body: BlocProvider(
         create: (context) => LoginCubit(),
-        child: BlocConsumer<LoginCubit , LoginStates>(
-          listener: (context, state) {},
+        child: BlocConsumer<LoginCubit, LoginStates>(
+          listener: (context, state) {
+            if (state is LoginSuccessStates) {
+              if (state.loginModel.status == true) {
+                CacheHelper.saveData(
+                        key: 'token', value: state.loginModel.data!.token)
+                    .then((value) {
+                      token = state.loginModel.data!.token;
+                  navigatAndRemove(context, HomeLayoutScreen.routName);
+                });
+                showToast(
+                    text: '${state.loginModel.message}',
+                    state: ToastState.SUCCESS);
+              } else {
+                showToast(
+                    text: '${state.loginModel.message}',
+                    state: ToastState.ERROR);
+              }
+            }
+          },
           builder: (context, state) {
             return SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
-                  key: formKey,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Login text
                     Text(
                       'LOGIN',
                       style: TextStyle(
@@ -47,56 +68,70 @@ class LoginScreen extends StatelessWidget {
                     SizedBox(
                       height: 30,
                     ),
-                    defaultTextFile(
-                      lable: 'Email Address',
-                      validator: (value) {
-                        if(value!.isEmpty){
-                          return 'Please enter your email address';
-                        }
-                      },
-                      prefixIcon: Icons.email_outlined,
-                      controller: emailController,
-                      inputType: TextInputType.emailAddress,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    defaultTextFile(
-                      lable: 'Password',
-                      validator: (value) {
-                        if(value!.isEmpty){
-                          return 'Password is too short';
-                        }
-                      },
-                      prefixIcon: Icons.lock_outline,
-                      controller: passwordController,
-                      inputType: TextInputType.visiblePassword,
-                      suffixIcon: Icons.visibility_off,
-                      isPassword: true,
+                    Form(
+                      key: formKey,
+                      child: Column(
+                        children: [
+                          defaultTextFile(
+                            lable: 'Email Address',
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Please enter your email address';
+                              }
+                              return null;
+                            },
+                            prefixIcon: Icons.email_outlined,
+                            controller: emailController,
+                            inputType: TextInputType.emailAddress,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          defaultTextFile(
+                            lable: 'Password',
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Password is too short';
+                              }
+                              return null;
+                            },
+                            prefixIcon: Icons.lock_outline,
+                            controller: passwordController,
+                            inputType: TextInputType.visiblePassword,
+                            suffixIcon: LoginCubit.get(context).suffixIcon,
+                            isPassword: LoginCubit.get(context).isPassword,
+                            suffixOnPressed: () {
+                              LoginCubit.get(context)
+                                  .changePasswordVisibility();
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: 20,
                     ),
                     ConditionalBuilder(
                       condition: state is! LoginLodingStates,
-                      builder:(context) => defaultButton(
+                      builder: (context) => defaultButton(
                         onPressed: () {
-                          // if(formKey.currentState!.validate()){
-                          //   LoginCubit.get(context).userLogin(
-                          //     user: emailController.text,
-                          //     password: passwordController.text,
-                          //   );
-                          // }
-
-
-                          LoginCubit.get(context).userLogin(
+                          if (formKey.currentState!.validate()) {
+                            LoginCubit.get(context).userLogin(
                               user: emailController.text,
                               password: passwordController.text,
-                          );
+                              lang: 'en',
+                            );
+                            print(
+                                emailController.text + passwordController.text);
+                          }
                         },
                         text: 'LOGIN',
                       ),
-                      fallback: (context) => Center(child: CircularProgressIndicator()),
+                      fallback: (context) =>
+                          Center(child: CircularProgressIndicator()),
+                    ),
+                    SizedBox(
+                      height: 10,
                     ),
                     SizedBox(
                       height: 10,
